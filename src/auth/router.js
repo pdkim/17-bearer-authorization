@@ -35,7 +35,7 @@ router.get('/api/sleep/:id', (req, res) => {
     })
 });
 
-router.put('api/sleep/:id', auth, (req, res) => {
+router.put('/api/sleep/:id', (req, res) => {
   // if(req.params.id === null) {
   //   res.status(404).send('Not Found');
   // }
@@ -46,16 +46,15 @@ router.put('api/sleep/:id', auth, (req, res) => {
   //   res.status(400).send('Bad Request');
   // }
   // else {
-  User.set(User.body, req.body);
-  User.save()
+    User.findByIdAndUpdate(req.params.id, req.body)
     .then(user => {
-      res.send(user.generateToken(), 'Credentials updated');
+      res.json(user);
     })
   // }
 })
 
-router.delete('api/sleep/:id', auth, (req, res) => {
-  User.deleteOne(req.params.id)
+router.delete('/api/sleep/:id', (req, res) => {
+  User.findByIdAndDelete(req.params.id)
     .then(() => {
       res.send('User Deleted');
     })
