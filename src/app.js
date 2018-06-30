@@ -4,9 +4,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 
-import router from '../src/auth/router.js';
-import errorHandler from '../src/middleware/error.js';
-import notFound from '../src/middleware/404.js';
+import router from './auth/router.js';
+import errorHandler from './middleware/error.js';
+import notFound from './middleware/404.js';
 
 let app = express();
 

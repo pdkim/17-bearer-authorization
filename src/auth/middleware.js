@@ -1,6 +1,6 @@
 'use strict';
 
-import User from './model.js';
+import User from './models.js';
 
 export default (req, res, next) => {
 
@@ -32,7 +32,7 @@ export default (req, res, next) => {
   };
 
   let getAuth = () => {
-    next({status: 401, statusMessage: 'Unauthorized', message: 'Invalid user or password idiot!'});
+    next({status: 401, statusMessage: 'Unauthorized', message: 'Invalid user or password!'});
   };
 
   try {

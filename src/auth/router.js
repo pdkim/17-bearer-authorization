@@ -13,12 +13,15 @@ router.post('/api/sleep', (req, res, next) => {
   }
   else{
     User.create(req.body)
-      .then(user => res.send(user.generateToken()))
+      .then(user => {
+        console.log('check', user);
+        res.send(user.generateToken())
+      })
       .catch(next);
   }
 });
 
-router.get('/api/sleep/:id', auth, (req, res) => {
+router.get('/api/sleep/:id', (req, res) => {
   // if(req.params.id === null) {
   //   res.status(404).send('Not Found');
   // }
@@ -26,9 +29,10 @@ router.get('/api/sleep/:id', auth, (req, res) => {
   //   res.status(401).send('Invalid request');
   // }
   // else{
-    res.cookie('Token: ', req.token);
-    res.send(req.token);
-  // }
+    User.findById(req.params.id)
+    .then(user => {
+      res.json(user);
+    })
 });
 
 router.put('api/sleep/:id', auth, (req, res) => {
