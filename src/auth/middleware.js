@@ -7,12 +7,8 @@ export default (req, res, next) => {
   let authorize = (token) => {
     User.authorize(token)
     .then(user => {
-      if(!user) {
-        getAuth();
-      }
-      else{ 
-        next(); 
-      }
+      if(!user) { getAuth(); }
+      else{ next(); }
     })
     .catch(next);
 };
@@ -20,9 +16,7 @@ export default (req, res, next) => {
   let authenticate = (auth) => {
     User.authenticate(auth)
       .then(user => {
-        if(!user) {
-          getAuth();
-        }
+        if(!user) { getAuth();}
         else{
           req.token = user.generateToken();
           next();
@@ -37,7 +31,7 @@ export default (req, res, next) => {
 
   try {
     let auth = {};
-    let authHeader = req.header.authorization;
+    let authHeader = req.headers.authorization;
 
     if(!authHeader) {
       return getAuth();
@@ -58,8 +52,8 @@ export default (req, res, next) => {
       let token = authHeader.replace(/bearer\s+/i, '');
       authorize(token);
     }
-  }
-  catch(e) {
+  } catch(e) {
     next(e);
   }
+
 };

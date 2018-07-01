@@ -5,58 +5,85 @@ import express from 'express';
 const router = express.Router();
 
 import User from './models.js';
+import Sleeper from './sleepers.js'
 import auth from './middleware.js';
 
-router.post('/api/sleep', (req, res, next) => {
+
+//sign up
+router.post('/api/signup', (req, res) => {
+  let user = new User(req.body);
+  if (Object.keys(req.body).length === 0) {
+    res.status(400).send('Bad Request');
+  }
+  else {
+    user.save()
+      .then(user => res.send(user.generateToken()))
+      .catch(err => console.error(err));
+  }
+});
+
+//sign in
+router.get('/api/signin', auth, (req, res) => {
+  if (req.body === null) {
+    res.status(401).send('Unauthorized');
+  }
+  else {
+    res.cookie('Token', req.token);
+    res.send('This is a test');
+  }
+});
+
+//POST sleeper
+router.post('/api/sleep', auth, (req, res, next) => {
   if(Object.keys(req.body).length === 0) {
     res.status(400).send('Bad Request');
   }
   else{
-    User.create(req.body)
-      .then(user => {
-        console.log('check', user);
-        res.send(user.generateToken())
+    Sleeper.create(req.body)
+      .then(snooze => {
+        console.log('check', snooze);
+        res.json(snooze);
       })
       .catch(next);
   }
 });
 
-router.get('/api/sleep/:id', (req, res) => {
-  // if(req.params.id === null) {
-  //   res.status(404).send('Not Found');
-  // }
-  // else if(req.params.id === '' || req.params.id === undefined) {
-  //   res.status(401).send('Invalid request');
-  // }
-  // else{
-    User.findById(req.params.id)
-    .then(user => {
-      res.json(user);
+//GET sleeper
+router.get('/api/sleep/:id', auth, (req, res, next) => {
+    Sleeper.findById(req.params.id)
+    .then(snooze => {
+      if(!Object) {
+        res.status(404).send('Not Found');
+      }
+      else {
+        res.json(snooze);
+      }
     })
+    .catch(next);
 });
 
-router.put('/api/sleep/:id', (req, res) => {
-  // if(req.params.id === null) {
-  //   res.status(404).send('Not Found');
-  // }
-  // else if(req.params.id === '' || req.params.id === undefined) {
-  //   res.status(401).send('Invalid Request');
-  // }
-  // else if(req.body === null) {
-  //   res.status(400).send('Bad Request');
-  // }
-  // else {
-    User.findByIdAndUpdate(req.params.id, req.body)
-    .then(user => {
-      res.json(user);
+//PUT sleeper
+router.put('/api/sleep/:id', auth, (req, res) => {
+  if(req.params.id === null) {
+    res.status(404).send('Not Found');
+  }
+  else if(Object.keys(req.body).length === 0) {
+    res.status(400).send('Bad Request');
+  }
+  else {
+    Sleeper.findByIdAndUpdate(req.params.id, req.body)
+    .then(snooze => {
+      res.json(snooze);
     })
-  // }
+  }
 })
 
-router.delete('/api/sleep/:id', (req, res) => {
-  User.findByIdAndDelete(req.params.id)
+
+//DELETE sleeper
+router.delete('/api/sleep/:id', auth, (req, res) => {
+  Sleeper.findByIdAndDelete(req.params.id)
     .then(() => {
-      res.send('User Deleted');
+      res.send('You are no longer allowed here!');
     })
 })
 
