@@ -35,10 +35,10 @@ router.get('/api/signin', auth, (req, res) => {
 
 //POST sleeper
 router.post('/api/sleep', auth, (req, res, next) => {
-  if(Object.keys(req.body).length === 0) {
+  if (Object.keys(req.body).length === 0) {
     res.status(400).send('Bad Request');
   }
-  else{
+  else {
     Sleeper.create(req.body)
       .then(snooze => {
         console.log('check', snooze);
@@ -48,33 +48,43 @@ router.post('/api/sleep', auth, (req, res, next) => {
   }
 });
 
-//GET sleeper
-router.get('/api/sleep/:id', auth, (req, res, next) => {
-    Sleeper.findById(req.params.id)
+router.get('/api/sleep/', auth, (req, res, next) => {
+  console.log(req.params);
+  Sleeper.find()
     .then(snooze => {
-      if(!Object) {
-        res.status(404).send('Not Found');
-      }
-      else {
-        res.json(snooze);
-      }
+      res.json(snooze);
     })
     .catch(next);
 });
 
-//PUT sleeper
-router.put('/api/sleep/:id', auth, (req, res) => {
-  if(req.params.id === null) {
+//GET sleeper
+router.get('/api/sleep/:id', auth, (req, res, next) => {
+  console.log(req.params);
+  if (req.params.id.length < 24) {
     res.status(404).send('Not Found');
   }
-  else if(Object.keys(req.body).length === 0) {
+  else {
+    Sleeper.findById(req.params.id)
+      .then(snooze => {
+        res.json(snooze);
+      })
+      .catch(next);
+  }
+});
+
+//PUT sleeper
+router.put('/api/sleep/:id', auth, (req, res) => {
+  if (req.params.id === null) {
+    res.status(404).send('Not Found');
+  }
+  else if (Object.keys(req.body).length === 0) {
     res.status(400).send('Bad Request');
   }
   else {
     Sleeper.findByIdAndUpdate(req.params.id, req.body)
-    .then(snooze => {
-      res.json(snooze);
-    })
+      .then(snooze => {
+        res.json(snooze);
+      })
   }
 })
 
